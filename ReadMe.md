@@ -1,16 +1,16 @@
-# Bus Shedules Web App.
+### Bus Shedules Web App.
 
-# Frontend technologies:
+## Frontend technologies:
     HTML/CSS/JS
 
-# Backend technologies:
+## Backend technologies:
     Body-parser
     EJS
     Express
     Express-Session
     Mongodb
 
-# Project file structure
+## Project file structure
     |- public
     |    |- images
     |    |    |- bus_icon.png
@@ -36,14 +36,14 @@
     |- app.js
 
 
-# The api inserts and retrieves data to a mongoDB cluster on cloud.
+## The api inserts and retrieves data to a mongoDB cluster on cloud.
 
-How does this work.\
-    1. Users can search for shedules by selecting route 'starting point' and 'ending point'.\
-    2. Then the api will search for routes that contains selected points 'in order'. But, we have to consider about the 'route_reversed' value.\
-    3. If matches are available, it will show the output.\
+# How does this work.\
+    1. Users can search for shedules by selecting route 'starting point' and 'ending point'.\
+    2. Then the api will search for routes that contains selected points 'in order'. But, we have to consider about the 'route_reversed' value.\
+    3. If matches are available, it will show the output.
 
-Schema of the database.
+# Schema of the database.
 
     Buses_collection
     {
