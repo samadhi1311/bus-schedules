@@ -44,6 +44,7 @@ How does this work.
     3. If matches are available, it will show the output.
 
 Schema of the database.
+
     Buses_collection
     {
         license_no: {
