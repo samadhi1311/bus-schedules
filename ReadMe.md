@@ -39,11 +39,11 @@
 ### The api inserts and retrieves data to a mongoDB cluster on cloud.
 
 ### How does this work.
-    <ol>
-        <li>Users can search for shedules by selecting route 'starting point' and 'ending point'.</li>
-        <li>Then the api will search for routes that contains selected points 'in order'. But, we have to consider about the 'route_reversed' value.</li>
-        <li>If matches are available, it will show the output.</li>
-    </ol>
+
+        - Users can search for shedules by selecting route 'starting point' and 'ending point'.
+        - Then the api will search for routes that contains selected points 'in order'. But, we have to consider about the 'route_reversed' value.
+        - If matches are available, it will show the output.
+
 
 ### Schema of the database.
 
