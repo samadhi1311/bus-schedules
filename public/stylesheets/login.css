@@ -1,0 +1,27 @@
+.container {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    background: url();
+    background-position: center;
+    background-size: cover;
+  }
+  
+.hero-text {
+    display: flex;
+    width: 80%;
+    margin: 0 auto;
+    padding: 2rem 0;
+    text-align: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  @media screen and (max-width: 768px) {
+    form {
+      display: block;
+    }
+  }

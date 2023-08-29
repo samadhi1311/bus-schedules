@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contribute | Bus Schedules</title>
+    <link rel="stylesheet" href="/stylesheets/master.css" />
+    <link rel="stylesheet" href="/stylesheets/contribute.css" />
+    <style>
+      .loading-spinner-container {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+}
+
+.loading-spinner {
+  display: inline-block;
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner::before {
+  display: none;
+}
+
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <nav>
+        <input type="checkbox" id="nav" class="hidden" />
+        <label for="nav" class="nav-btn">
+          <i></i>
+          <i></i>
+          <i></i>
+          
+        </label>
+        <div class="nav-wrapper">
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <% if (authenticated) { %>
+              <!-- Show the username in the header if the user is logged in -->
+              <li><a href="#"></a><%= username %></li>
+              <li><a href="/logout">Logout</a></li>
+            <% } else { %>
+              <li><a href="/login">Login</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-text">
+        <h1>Add a new schedule:</h1>
+        <br />
+        <form
+          action="/contributeSchedule"
+          method="POST"
+          class="contribute-form"
+        >
+          <table>
+            <tr>
+              <td>
+                <h3>Route Number: &nbsp;</h3>
+              </td>
+              <td>
+                <select id="route_no" name="route_no">
+                  <option value="none" selected disabled hidden>
+                    Select a route
+                  </option>
+                  <!-- Add an option for adding a new route -->
+                  <option value="new">Add New Route</option>
+                  <% routes.forEach((route)=> { %>
+                  <option value="<%= route %>"><%= route %></option>
+                  <% }); %>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>Start Location: &nbsp;</h3>
+              </td>
+              <td>
+                <input type="text" id="start" name="start" readonly />
+                <div class="loading-spinner-container" id="startLoadingSpinner">
+                  <span class="loading-spinner"></span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>End Location: &nbsp;</h3>
+              </td>
+              <td>
+                <input type="text" id="end" name="end" readonly />
+                <div class="loading-spinner-container" id="endLoadingSpinner">
+                  <span class="loading-spinner"></span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>Start Time: &nbsp;</h3>
+              </td>
+              <td>
+                <input
+                  type="time"
+                  id="newStartTime"
+                  name="newStartTime"
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>End Time: &nbsp;</h3>
+              </td>
+              <td>
+                <input type="time" id="newEndTime" name="newEndTime" />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>License Number: &nbsp;</h3>
+              </td>
+              <td>
+                <input type="text" id="licenseNo" name="licenseNo" required />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>Contact Number: &nbsp;</h3>
+              </td>
+              <td>
+                <input type="text" id="contactNo" name="contactNo" required />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>Route Reversed: &nbsp;</h3>
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  id="routeReversed"
+                  name="routeReversed"
+                />
+              </td>
+            </tr>
+          </table>
+          <br />
+          <button type="submit">Upload Schedule</button>
+        </form>
+        <!-- Add a modal for entering a new route -->
+        <div id="newRouteModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Route</h2>
+            <form id="newRouteForm">
+              <span>
+                <h3>Route Number: &nbsp;</h3>
+                <input type="text" id="newRouteNo" name="newRouteNo" required />
+              </span>
+              
+              <span>
+                <h3>Start Location: &nbsp;</h3>
+                <input type="text" id="newStart" name="newStart" required />
+                <span
+                  class="loading-spinner"
+                  id="startLoadingSpinner"
+                  style="display: none"
+                ></span>
+              </span>
+              <span>
+                <h3>End Location: &nbsp;</h3>
+                <input type="text" id="newEnd" name="newEnd" required />
+                <span
+                  class="loading-spinner"
+                  id="endLoadingSpinner"
+                  style="display: none"
+                ></span>
+              </span>
+              <br />
+              <button type="button" id="submitNewRouteBtn">Add Route</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const showLoadingSpinner = (elementId) => {
+        const spinnerContainer = document.getElementById(elementId);
+        spinnerContainer.style.display = "flex"; // Show the spinner container
+      };
+
+      const hideLoadingSpinner = (elementId) => {
+        const spinnerContainer = document.getElementById(elementId);
+        spinnerContainer.style.display = "none"; // Hide the spinner container
+      };
+
+      // Function to show the new route modal
+      const showNewRouteModal = () => {
+        const modal = document.getElementById("newRouteModal");
+        modal.style.display = "block";
+      };
+
+      // Function to close the new route modal
+      const closeModal = () => {
+        const modal = document.getElementById("newRouteModal");
+        modal.style.display = "none";
+      };
+
+      // Event listener for the "Add Route" button in the new route modal
+      document
+        .getElementById("submitNewRouteBtn")
+        .addEventListener("click", () => {
+          // Get the values from the new route form
+          const newRouteNo = document.getElementById("newRouteNo").value;
+          const newStart = document.getElementById("newStart").value;
+          const newEnd = document.getElementById("newEnd").value;
+
+          // Close the modal
+          closeModal();
+
+          // Show loading spinner while adding the new route
+          showLoadingSpinner("startLoadingSpinner");
+          showLoadingSpinner("endLoadingSpinner");
+
+          // Simulate the process of adding a new route (replace this with actual API call)
+          setTimeout(() => {
+            // Update the route_no dropdown with the newly added route
+            const routeSelect = document.getElementById("route_no");
+            const newOption = document.createElement("option");
+            newOption.value = newRouteNo;
+            newOption.textContent = newRouteNo;
+            routeSelect.appendChild(newOption);
+
+            // Set the selected route to the newly added route
+            routeSelect.value = newRouteNo;
+
+            // Update the start and end location fields with the new values
+            document.getElementById("start").value = newStart;
+            document.getElementById("end").value = newEnd;
+
+            // Hide loading spinner after route is added
+            hideLoadingSpinner("startLoadingSpinner");
+            hideLoadingSpinner("endLoadingSpinner");
+          }, 2000); // Replace 2000 with the time it takes to add the new route (milliseconds)
+        });
+
+      // Event listener for route selection
+      document.getElementById("route_no").addEventListener("change", () => {
+        const selectedRoute = document.getElementById("route_no").value;
+        if (selectedRoute === "new") {
+          // Show the modal for adding a new route
+          showNewRouteModal();
+        } else {
+          // Show loading spinner while fetching route details
+          showLoadingSpinner("startLoadingSpinner");
+          showLoadingSpinner("endLoadingSpinner");
+
+          // Fetch the selected route details and update start and end location fields
+          fetch(`/routeDetails?route_no=${selectedRoute}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.start && data.end) {
+                document.getElementById("start").value = data.start;
+                document.getElementById("end").value = data.end;
+              }
+
+              // Hide loading spinner after data is fetched
+              hideLoadingSpinner("startLoadingSpinner");
+              hideLoadingSpinner("endLoadingSpinner");
+            })
+            .catch((err) => {
+              console.error(err);
+
+              // Hide loading spinner on error
+              hideLoadingSpinner("startLoadingSpinner");
+              hideLoadingSpinner("endLoadingSpinner");
+            });
+        }
+      });
+
+      // Event listener for the close button in the new route modal
+      document.querySelector(".close").addEventListener("click", closeModal);
+    });
+  </script>
+</html>

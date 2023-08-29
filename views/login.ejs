@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Bus Schedules</title>
+  <link rel="stylesheet" href="/stylesheets/master.css" type="text/css">
+  <link rel="stylesheet" href="/stylesheets/login.css" type="text/css">
+</head>
+
+<body>
+    <header>
+        <nav>
+          <input type="checkbox" id="nav" class="hidden" />
+          <label for="nav" class="nav-btn">
+            <i></i>
+            <i></i>
+            <i></i>
+          </label>
+          <div class="nav-wrapper">
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contribute">Contribute</a></li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+
+  <main>
+    <section class="hero-text">
+      <h1>Login</h1>
+      <form action="/login" method="POST">
+        <table>
+            <tr>
+                <td><label for="username">Username:</label></td>
+                <td><input type="text" id="username" name="username" required></td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+                <td><label for="password">Password:</label></td>
+                <td><input type="password" id="password" name="password" required></td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+                <td colspan="2" align="center"><button type="submit">Login</button></td>
+            </tr>
+        </table>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <!-- Your footer content here -->
+  </footer>
+
+</body>
+
+</html>

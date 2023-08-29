@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search | Bus Schedules</title>
+  <link rel="stylesheet" href="/stylesheets/master.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/index.css" type="text/css" />
+  <script src="https://kit.fontawesome.com/15a888d1db.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <input type="checkbox" id="nav" class="hidden" />
+      <label for="nav" class="nav-btn">
+        <i></i>
+        <i></i>
+        <i></i>
+      </label>
+      <div class="nav-wrapper">
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contribute">Contribute</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero-text">
+      <picture>
+        <img src="/images/bus_icon.png" alt="Logo" class="hero-image" />
+      </picture>
+
+      <h1>TransitMaster</h1>
+      <h3>Search for a bus schedule</h3>
+
+      <br />
+
+      <div class="search">
+        <form action="/busDetails" method="GET" id="scheduleForm">
+          <table>
+            <tr>
+              <td>
+                <h3>From: &nbsp;</h3>
+              </td>
+              <td>
+                <select id="start" name="start">
+                  <option value="none" selected disabled hidden>
+                    Select a start location
+                  </option>
+                  <% routes.forEach((route)=> { %>
+                    <option value="<%= route.start %>">
+                      <%= route.start %>
+                    </option>
+                    <% }); %>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>To: &nbsp;</h3>
+              </td>
+              <td>
+                <select id="end" name="end">
+                  <option value="none" selected disabled hidden>
+                    Select a destination
+                  </option>
+                  <% routes.forEach((route)=> { %>
+                    <option value="<%= route.end %>">
+                      <%= route.end %>
+                    </option>
+                    <% }); %>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <h3>Around: &nbsp;</h3>
+              </td>
+              <td><input id="time" type="time" name="time" /></td>
+            </tr>
+            <tr>
+              <td colspan="2"><br /></td>
+            </tr>
+            <tr>
+              <td colspan="2" align="center">
+                <button type="submit" id="submitBtn">
+                  <i class="fa fa-search" aria-hidden="true"></i>&nbsp;
+                  &nbsp;Search
+                </button>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- New section for displaying schedule cards -->
+  <section class="schedule-cards" id="busDetails">
+    <% if (busDetails && busDetails.length> 0) { %>
+      <!-- Loop through the busDetails data and render each schedule as a card -->
+      <% busDetails.forEach((schedule)=> { %>
+        <div class="schedule-card">
+          <h2>Route Number: <%= schedule.route_no %>
+          </h2>
+          <p>License Number: <%= schedule.license_no %>
+          </p>
+          <p>Contact Number: <%= schedule.contact_no %>
+          </p>
+          <div class="schedule-times">
+            <% schedule.route_times.forEach((time, index)=> { %>
+              <p> Schedule <%= index + 1 %>: <%= time.start_hour %>:<%= time.start_minute %> - <%= time.finish_hour %>:
+                        <%= time.finish_minute %>
+              </p>
+              <% }); %>
+          </div>
+        </div>
+        <% }); %>
+          <% } else { %>
+            <% } %>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document
+        .getElementById("scheduleForm")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const formData = new FormData(event.target);
+          const startValue = formData.get("start");
+          const endValue = formData.get("end");
+
+          // Log the values to check if they are being correctly obtained
+          console.log("Start Value:", startValue);
+          console.log("End Value:", endValue);
+
+          fetch(`/busDetails?start=${startValue}&end=${endValue}`)
+            .then((response) => response.json())
+            .then((data) => {
+              let busDetailsElement = document.getElementById("busDetails");
+              busDetailsElement.innerHTML = "";
+
+              if (data.message) {
+                let errorMessage = document.createElement("p");
+                errorMessage.textContent = data.message;
+                busDetailsElement.appendChild(errorMessage);
+              } else if (data && data.length > 0) {
+                data.forEach((bus) => {
+                  let card = document.createElement("div");
+                  card.className = "schedule-card";
+
+                  let routeNumber = document.createElement("h2");
+                  routeNumber.textContent = `Route Number: ${bus.route_no}`;
+
+                  let licenseNumber = document.createElement("p");
+                  licenseNumber.textContent = `License Number: ${bus.license_no}`;
+
+                  let contactNumber = document.createElement("p");
+                  contactNumber.textContent = `Contact Number: ${bus.contact_no}`;
+
+                  card.appendChild(routeNumber);
+                  card.appendChild(licenseNumber);
+                  card.appendChild(contactNumber);
+
+                  if (bus.route_times && bus.route_times.length > 0) {
+                    let scheduleTimes = document.createElement("ul");
+                    scheduleTimes.className = "schedule-times";
+
+                    bus.route_times.forEach((time) => {
+                      let scheduleTime = document.createElement("li");
+                      scheduleTime.textContent = formatTime(time.start_hour, time.start_minute) + " - " + formatTime(time.finish_hour, time.finish_minute);
+                      scheduleTimes.appendChild(scheduleTime);
+                    });
+
+                    card.appendChild(scheduleTimes);
+                  }
+
+                  busDetailsElement.appendChild(card);
+                });
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        });
+    });
+
+    function formatTime(hour, minute) {
+      let period = "AM";
+      if (hour >= 12) {
+        period = "PM";
+        hour = hour === 12 ? hour : hour - 12;
+      }
+      return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")} ${period}`;
+    }
+  </script>
+</body>
+
+</html>

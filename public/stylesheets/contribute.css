@@ -1,0 +1,93 @@
+.container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  background: url();
+  background-position: center;
+  background-size: cover;
+}
+
+.hero-text {
+  position: absolute;
+  width: 80%;
+  /*width: -moz-fit-content;
+      width: fit-content;*/
+  margin: 0;
+  padding: 2rem 0;
+  text-align: center;
+  top: 50vh;
+  right: 50vw;
+  transform: translate(
+    50%,
+    -50%
+  ); /*
+      background: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      border: 0.2rem solid #fff;
+      -webkit-backdrop-filter: blur(9px);
+      backdrop-filter: blur(9px);*/
+}
+
+.hero-image {
+  width: auto;
+  max-width: 200px;
+  padding: 3rem 2rem;
+}
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Enable scroll if needed */
+    background-color: rgba(255, 255, 255); /* Black w/ opacity */
+    border-radius: 6px;
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 12px;
+  }
+
+  #submitNewRouteBtn {
+    margin-top: 1rem;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+
+  .contribute-form {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-around;
+    flex-direction: column;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-content: space-around;
+  }
+
+  .contribute-form span {
+    display: flex;
+  }

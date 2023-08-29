@@ -1,0 +1,10 @@
+.hero-text {
+    position: absolute;
+    width: 80%;
+    margin: 0;
+    padding: 2rem 0;
+    text-align: center;
+    top: 50vh;
+    right: 50vw;
+    transform: translate(50%, -50%);
+  }
